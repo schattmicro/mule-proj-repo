@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2275fc2f-7f41-4067-acd7-76257d1323e2" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="5d47e82e-f8b1-4a52-b92e-62ee1a316713" >
+		<http:request-connection host="localhost" port="8081" />
+	</http:request-config>
+	<flow name="main" doc:id="f95fcec4-f0cb-4c17-8cac-7c9e1fc8f3c3" >
+		<http:listener doc:name="HTTP GET /pianos" doc:id="5baf47d4-eb1e-4864-be59-6b0ed04f463e" config-ref="HTTP_Listener_config" path="/pianos"/>
+		<set-payload value='#[message.attributes.queryParams.Piano_Pedigree]' doc:name='"Piano Pedigree"' doc:id="3d23fa78-1b53-4195-a555-cae868fd02de" />
+		<set-variable value="dummy" doc:name="producer" doc:id="3a1806af-f2c3-4b74-a9fd-39fd8dc72932" variableName="producer"/>
+		<http:request method="POST" doc:name="Request" doc:id="4fce2856-305b-4e05-b659-21645d83fa69" config-ref="HTTP_Request_configuration" path="/child"/>
+		<logger level="INFO" doc:name="Logger" doc:id="df195000-3660-4068-b81b-9a503b939371" message="#[[payload, vars.producer]]"/>
+	</flow>
+	<flow name="child" doc:id="a3211fc2-a39a-4671-93c6-84b7cb7f639e" >
+		<http:listener doc:name="Listener" doc:id="5690113d-98ca-49c3-9b9f-4ceb1f8e55bb" config-ref="HTTP_Listener_config" path="/child"/>
+		<logger level="INFO" doc:name="Logger" doc:id="75b3d9d6-01d3-420d-b542-880ab1383a43" message="payload"/>
+	</flow>
+</mule>
